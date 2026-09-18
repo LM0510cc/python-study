@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+# 项目：BMI计算器
+# 编写日期：2026-09-18
+# 作者：LM0510cc
+# 功能：输入身高体重，计算BMI并给出健康评估
+
 while True:
     weight_input = input("请输入您的体重 单位 kg：")
 
