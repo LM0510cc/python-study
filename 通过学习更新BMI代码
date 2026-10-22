@@ -1,0 +1,78 @@
+ import json
+
+# 存档文件名
+file_name = "bmi_record.json"
+record_list = []
+
+# 启动时先读一下历史记录
+try:
+    with open(file_name, "r", encoding="utf-8") as f:
+        record_list = json.load(f)
+    print(f"读取成功，目前有 {len(record_list)} 条历史数据\n")
+except FileNotFoundError:
+    print("第一次运行，还没有历史记录\n")
+except json.JSONDecodeError:
+    print("文件格式坏了，重新新建记录\n")
+    record_list = []
+
+while True:
+    weight_input = input("请输入体重(kg)，结束请输入'所有人已测量完毕'：")
+
+    if weight_input == "所有人已测量完毕":
+        print("好的，程序关闭")
+        break
+
+    # 防止输入非数字
+    try:
+        user_weight = float(weight_input)
+    except ValueError:
+        print("输入错误，体重必须是数字，重新输！\n")
+        continue
+
+    if user_weight <= 0:
+        print("体重不能小于等于0，重新输！\n")
+        continue
+
+    height_input = input("请输入身高(m)：")
+
+    # 防止输入非数字
+    try:
+        user_height = float(height_input)
+    except ValueError:
+        print("输入错误，身高必须是数字，重新输！\n")
+        continue
+
+    if user_height <= 0:
+        print("身高不能小于等于0，重新输！\n")
+        continue
+
+    # 算BMI
+    BMI = user_weight / (user_height ** 2)
+
+    if BMI < 18.5:
+        comment = "太瘦了，兄弟，该增肌了"
+    elif BMI < 24:
+        comment = "牛逼兄弟，身材真是完美\n同龄男生看了流泪"
+    elif BMI < 28:
+        comment = "兄弟，稍微有点胖了，晚上尽量别吃饭了！"
+    else:
+        comment = "逼自己一把，你一定会发现更好的自己，该减肥了兄弟"
+
+    print(f"您的BMI为：{BMI:.2f}")
+    print(comment)
+    print("-" * 30)
+
+    # 存到列表里
+    one_record = {
+        "体重(kg)": user_weight,
+        "身高(m)": user_height,
+        "BMI值": round(BMI, 2),
+        "评价": comment
+    }
+    record_list.append(one_record)
+
+# 退出循环后，写入文件
+with open(file_name, "w", encoding="utf-8") as f:
+    json.dump(record_list, f, ensure_ascii=False, indent=2)
+
+print(f"\n所有记录已保存到 {file_name} 里了")
